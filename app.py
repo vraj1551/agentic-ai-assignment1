@@ -5,27 +5,36 @@ import asyncio
 from tasks.task1_search_agent import fetch_search_results, summarize_with_gemini
 from tasks.task2_async_agent import run_async_search_agent
 from tasks.task3_custom_prompt import run_chat
+from tasks.task4_rag_simple import rag_with_groq  # ✅ Added for Task 4
 
-# Sidebar
-st.sidebar.title("🧠 AI Agent Tasks")
-task = st.sidebar.radio("Select Task", [
+# --- Sidebar ---
+st.sidebar.title("AI Agent Tasks")  # ✅ Removed 🧠
+st.sidebar.markdown("**22000884 - Vraj Vyas**")  # ✅ Added name + roll number
+
+# Task Buttons instead of Radio
+task_options = [
     "Web Search Agent",
     "Web Search Agent (Async)",
     "System + User Prompt",
     "Using RAG"
-])
+]
 
+if "selected_task" not in st.session_state:
+    st.session_state.selected_task = task_options[0]
+
+for option in task_options:
+    if st.sidebar.button(option, use_container_width=True):
+        st.session_state.selected_task = option
+
+task = st.session_state.selected_task  # ✅ Task selection persists
+
+# --- Main Display ---
 st.title("🤖 Multi-Agent Search Assistant")
 st.subheader(f"Current Task: {task}")
 
 # Session state for task-specific chat history
 if "chat_history" not in st.session_state:
-    st.session_state.chat_history = {
-        "Web Search Agent": [],
-        "Web Search Agent (Async)": [],
-        "System + User Prompt": [],
-        "Using RAG": []
-    }
+    st.session_state.chat_history = {opt: [] for opt in task_options}
 
 current_history = st.session_state.chat_history[task]
 
@@ -82,6 +91,12 @@ else:
                         response = asyncio.run(run_async_search_agent(prompt))
                     except Exception as e:
                         response = f"❌ Error: {e}"
+
+                elif task == "Using RAG":  # ✅ Task 4
+                    try:
+                        response = rag_with_groq(prompt)
+                    except Exception as e:
+                        response = f"❌ RAG Error: {e}"
 
                 else:
                     response = f"🚧 This task ({task}) is not implemented yet."

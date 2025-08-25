@@ -7,3 +7,6 @@ langchain-core
 langchain-google-genai
 groq
 pydantic
+scikit-learn
+sentence-transformers
+numpy

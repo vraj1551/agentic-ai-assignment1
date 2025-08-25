@@ -9,6 +9,7 @@ load_dotenv()
 serpapi_client = serpapi.Client(api_key=os.getenv("SERPAPI_API_KEY"))
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
+
 def fetch_search_results(query, num_results=5):
     try:
         data = serpapi_client.search(
